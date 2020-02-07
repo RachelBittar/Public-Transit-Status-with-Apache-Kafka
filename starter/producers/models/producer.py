@@ -38,9 +38,8 @@ class Producer:
         #
         #
         self.broker_properties = {
-            # TODO
-            # TODO
-            # TODO
+            "BROKER_URL": "PLAINTEXT://localhost:9092",
+            "SCHEMA_REGISTRY_URL": "http://localhost:8081"
         }
 
         # If the topic does not already exist, try to create it
@@ -48,18 +47,20 @@ class Producer:
             self.create_topic()
             Producer.existing_topics.add(self.topic_name)
 
-        # TODO: Configure the AvroProducer
-        # self.producer = AvroProducer(
-        # )
+
+        self.producer = AvroProducer(
+             {"bootstrap.servers": self.broker_properties.get("BROKER_URL"),
+              "schema.registry.url": self.broker_properties.get("SCHEMA_REGISTRY_URL")},
+             default_key_schema=key_schema,
+             default_value_schema=value_schema
+         )
 
     def create_topic(self):
-        """Creates the producer topic if it does not already exist"""
-        #
-        #
-        # TODO: Write code that creates the topic for this producer if it does not already exist on
-        # the Kafka Broker.
-        #
-        #
+
+        client = AdminClient({"bootstrap.servers": self.broker_properties.get("BROKER_URL")})
+        topic = NewTopic(self.topic_name, num_partitions=self.num_partitions, replication_factor=self.num_replicas)
+        client.create_topics([topic])
+
         logger.info("topic creation kafka integration incomplete - skipping")
 
     def time_millis(self):
@@ -67,11 +68,9 @@ class Producer:
 
     def close(self):
         """Prepares the producer for exit by cleaning up the producer"""
-        #
-        #
-        # TODO: Write cleanup code for the Producer here
-        #
-        #
+        if self.producer is not None:
+            self.producer.flush()
+
         logger.info("producer close incomplete - skipping")
 
     def time_millis(self):
