@@ -1,3 +1,4 @@
+
 """Configures KSQL to combine station and turnstile data"""
 import json
 import logging
@@ -6,11 +7,9 @@ import requests
 
 import topic_check
 
-
 logger = logging.getLogger(__name__)
 
-
-KSQL_URL = "http://localhost:8088"
+KSQL_URL = "http://ksql:8088"
 
 #
 # TODO: Complete the following KSQL statements.
@@ -23,14 +22,17 @@ KSQL_URL = "http://localhost:8088"
 
 KSQL_STATEMENT = """
 CREATE TABLE turnstile (
-    ???
+    station_id BIGINT,
+    station_name VARCHAR,
+    line VARCHAR 
 ) WITH (
-    ???
+    KAFKA_TOPIC = 'com.cta.streams.turnstile',
+    VALUE_FORMAT = 'AVRO',
+    KEY = 'station_id'
 );
-
 CREATE TABLE turnstile_summary
-WITH (???) AS
-    ???
+WITH (VALUE_FORMAT = 'JSON') AS
+    SELECT COUNT(station_id) FROM turnstile GROUP by station_id;
 """
 
 
@@ -58,3 +60,4 @@ def execute_statement():
 
 if __name__ == "__main__":
     execute_statement()
+

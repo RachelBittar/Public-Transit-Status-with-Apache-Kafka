@@ -38,8 +38,8 @@ class Producer:
         #
         #
         self.broker_properties = {
-            "BROKER_URL": "PLAINTEXT://localhost:9092",
-            "SCHEMA_REGISTRY_URL": "http://localhost:8081"
+            "BROKER_URL": "PLAINTEXT://kafka0:19092",
+            "SCHEMA_REGISTRY_URL": "http://schema-registry:8081/"
         }
 
         # If the topic does not already exist, try to create it
